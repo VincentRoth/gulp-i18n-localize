@@ -1,11 +1,11 @@
 'use strict';
 var assert = require('assert');
-var gutil = require('gulp-util');
+var Vinyl = require('vinyl');
 var i18n = require('.././');
 
 
 describe('gulp-i18n-localize: schema', function() {
-  var file = new gutil.File({
+  var file = new Vinyl({
     base: __dirname,
     path: __dirname + '/file.html',
     contents: new Buffer('${{ foo.bar }}$')
@@ -19,7 +19,8 @@ describe('gulp-i18n-localize: schema', function() {
     });
 
     stream.on('data', function (file) {
-      assert.ok(/\/es-US\/file.html/.test(file.path));
+      // Unix uses / separator while Windows uses \
+      assert.ok(/(\/|\\)es-US(\/|\\)file.html$/.test(file.path));
     });
 
     stream.on('end', cb);
@@ -32,11 +33,11 @@ describe('gulp-i18n-localize: schema', function() {
       locales: ['es-US'],
       localeDir: './test/fixtures/locales',
       schema: 'suffix'
-
     });
 
     stream.on('data', function (file) {
-      assert.ok(/\/file-es-US.html/.test(file.path));
+      console.log(file.path);
+      assert.ok(/(\/|\\)file-es-US.html$/.test(file.path));
     });
 
     stream.on('end', cb);

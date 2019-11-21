@@ -1,12 +1,13 @@
 'use strict';
 var assert = require('assert');
-var gutil = require('gulp-util');
+var fancyLog = require('fancy-log');
+var Vinyl = require('vinyl');
 var i18n = require('.././');
 var sinon = require('sinon');
 
 describe('gulp-i18n-localize', function() {
   var stream;
-	var spy = sinon.spy(gutil, 'log');
+	var spy = sinon.spy(fancyLog, 'warn');
 
   beforeEach(function() {
     stream = i18n({
@@ -34,7 +35,7 @@ describe('gulp-i18n-localize', function() {
 			assert.ok(spy.calledWith('gulp-i18n-localize: locale directory not found'));
 			cb();
 		});
-		stream.write(new gutil.File({
+		stream.write(new Vinyl({
 			base: __dirname,
 			path: __dirname + '/file.html',
 			contents: new Buffer('${{ bar.foo }}$ ${{ bar.foo }}$')
@@ -49,7 +50,7 @@ describe('gulp-i18n-localize', function() {
       });
 
       stream.on('end', cb);
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         base: __dirname,
         path: __dirname + '/file.html',
         contents: new Buffer('${{ foo.bar }}$ ${{ foo.bar }}$')
@@ -65,7 +66,7 @@ describe('gulp-i18n-localize', function() {
       });
 
       stream.on('end', cb);
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         base: __dirname,
         path: __dirname + '/file.html',
         contents: new Buffer('$ foo.bar $')
@@ -85,12 +86,12 @@ describe('gulp-i18n-localize', function() {
       stream.on('data', function (file) {
         assert.ok(spy.called);
 				assert.ok(
-					spy.calledWith('gulp-i18n-localize:', '${{ bar.foo }}$', 'translation missing in', 'en-US')
+					spy.calledWith('gulp-i18n-localize: ${{ bar.foo }}$ translation missing in en-US')
 				);
       });
 
       stream.on('end', cb);
-      stream.write(new gutil.File({
+      stream.write(new Vinyl({
         base: __dirname,
         path: __dirname + '/file.html',
         contents: new Buffer('${{ bar.foo }}$ ${{ bar.foo }}$')
